@@ -18,6 +18,7 @@ local ESP = {
 	Players = true,
     DistanceS = 2000,
 	HealthCustom = "None",
+	Size = 15,
 
 	Objects = setmetatable({}, {__mode="kv"}),
 	Overrides = {}
@@ -364,32 +365,31 @@ function ESP:Add(obj, options)
 	})
 	box.Components["Name"] = Draw("Text", {
 		Text = box.Name,
-		Text.Size = 100,
 		Color = box.Color,
 		Center = true,
 		Outline = true,
-		Size = 15,
+		Size = ESP.Size,
 		Visible = self.Enabled and self.Names
 	})
 	box.Components["Distance"] = Draw("Text", {
 		Color = box.Color,
 		Center = true,
 		Outline = true,
-		Size = 15,
+		Size = ESP.Size,
 		Visible = self.Enabled and self.Distance
 	})
 	box.Components["Health"] = Draw("Text", {
 		Color = box.Color,
 		Center = true,
 		Outline = true,
-		Size = 15,
+		Size = ESP.Size,
 		Visible = self.Enabled and self.Health
 	})
     box.Components["Tool"] = Draw("Text", {
 		Color = box.Color,
 		Center = true,
 		Outline = true,
-		Size = 15,
+		Size = ESP.Size,
 		Visible = self.Enabled and self.Tool
 	})
 	box.Components["Tracer"] = Draw("Line", {
