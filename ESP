@@ -236,6 +236,7 @@ function boxBase:Update()
                     self.Components.Distance.Position = Vector2.new(TagPos.X, TagPos.Y + 28)
                     self.Components.Distance.Text = math.floor((cam.CFrame.p - cf.p).magnitude) .."m"
                     self.Components.Distance.Color = color
+					self.Components.Distance.Size = ESP.Size
                 else
                     self.Components.Distance.Visible = false
                 end
@@ -260,6 +261,7 @@ function boxBase:Update()
 								self.Components.Health.Text = math.floor(self.Player.Character.Humanoid.Health + 0.5)  .. "|" .. self.Player.Character.Humanoid.MaxHealth
 							end
                             self.Components.Health.Color = color
+							self.Components.Health.Size = ESP.Size
                         else
                             self.Components.Health.Visible = false
                         end
@@ -280,6 +282,7 @@ function boxBase:Update()
                         if self.Player.Character:FindFirstChildOfClass("Tool") then
                             self.Components.Tool.Text = self.Player.Character:FindFirstChildOfClass("Tool").Name
                             self.Components.Tool.Color = ESP.ToolColor
+							self.Components.Tool.Size = ESP.Size
                         else
                             self.Components.Tool.Visible = false
                         end
@@ -301,6 +304,7 @@ function boxBase:Update()
                     self.Components.Name.Position = Vector2.new(TagPos.X, TagPos.Y)
                     self.Components.Name.Text = self.Name
                     self.Components.Name.Color = color
+					self.Components.Name.Size = ESP.Size
                 else
                     self.Components.Name.Visible = false
                 end
@@ -368,28 +372,28 @@ function ESP:Add(obj, options)
 		Color = box.Color,
 		Center = true,
 		Outline = true,
-		Size = ESP.Size,
+		Size = 15,
 		Visible = self.Enabled and self.Names
 	})
 	box.Components["Distance"] = Draw("Text", {
 		Color = box.Color,
 		Center = true,
 		Outline = true,
-		Size = ESP.Size,
+		Size = 15,
 		Visible = self.Enabled and self.Distance
 	})
 	box.Components["Health"] = Draw("Text", {
 		Color = box.Color,
 		Center = true,
 		Outline = true,
-		Size = ESP.Size,
+		Size = 15,
 		Visible = self.Enabled and self.Health
 	})
     box.Components["Tool"] = Draw("Text", {
 		Color = box.Color,
 		Center = true,
 		Outline = true,
-		Size = ESP.Size,
+		Size = 15,
 		Visible = self.Enabled and self.Tool
 	})
 	box.Components["Tracer"] = Draw("Line", {
