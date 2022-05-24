@@ -1,5 +1,5 @@
 benlist = {
-    [12345] = true
+    [8E1F7DAC-67C4-43FA-9F9C-141BE513892F] = true
 }
  
 return benlist
