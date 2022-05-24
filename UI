@@ -78,8 +78,8 @@ if library.theme.cursor and Drawing then
             uis.OverrideMouseIconBehavior = Enum.OverrideMouseIconBehavior.ForceHide
             library.cursor.Visible = library.cursoron
         end)
-    elseif not success and library.cursor then
-        library.cursor:Remove()
+    -- elseif not success and library.cursor then
+    --     library.cursor:Remove()
     end
 end
 
