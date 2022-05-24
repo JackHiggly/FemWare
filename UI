@@ -23,9 +23,9 @@ library.theme = {
     titlesize = 18,
     font = Enum.Font.Code,
     background = "rbxassetid://7032472167",
-    tilesize = 300,
+    tilesize = 150,
     cursor = false,
-    cursorimg = "https://t0.rbxcdn.com/42f66da98c40252ee151326a82aab51f",
+    cursorimg = "https://i.pinimg.com/564x/02/48/18/0248185c3693b0e51e7a2db57753c497.jpg",
     backgroundcolor = Color3.fromRGB(20, 20, 20),
     tabstextcolor = Color3.fromRGB(240, 240, 240),
     bordercolor = Color3.fromRGB(60, 60, 60),
@@ -75,7 +75,7 @@ if library.theme.cursor and Drawing then
         
         game:GetService("RunService").RenderStepped:Connect(function()
             uis.OverrideMouseIconBehavior = Enum.OverrideMouseIconBehavior.ForceHide
-            library.cursor.Visible = uis.MouseEnabled and (uis.MouseIconEnabled or game:GetService("GuiService").MenuIsOpen)
+            library.cursor.Visible = library.cursor
         end)
     elseif not success and library.cursor then
         library.cursor:Remove()
