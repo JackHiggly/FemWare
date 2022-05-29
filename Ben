@@ -1,6 +1,0 @@
-benlist = {
-    ["8E1F7DAC-67C4-43FA-9F9C-141BE513892F"] = true,
-    ["EA3E8D15-D4F6-43C6-BDCB-D8CDF73D8BC4"] = true
-}
- 
-return benlist
