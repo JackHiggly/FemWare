@@ -13,14 +13,6 @@ local S, E = pcall(function()
 
     --repeat wait(0.5) until game:IsLoaded() and game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid")
 
-    for _, Connection in pairs(getconnections(game:GetService("ScriptContext").Error)) do
-        Connection:Disable()
-    end
-    
-    for _, Connection in pairs(getconnections(game:GetService("LogService").MessageOut)) do
-        Connection:Disable()
-    end
-
     --Settings--
     local ESP = {
         Enabled = false,
@@ -642,6 +634,19 @@ local S, E = pcall(function()
     local World = serv:Channel("ESP")
 
     local bnds = serv:Channel("Binds")
+
+    local serv2 = win:Server("Contributors", "")
+
+    local lbls = serv2:Channel("FemWare")
+
+    lbls:Label("Made by Fanya#6470. Support us over discord.gg/femware")
+
+    lbls:Button("Discord Link", function()
+        pcall(function()
+            setclipboard("discord.gg/femware")
+            game:GetService("StarterGui"):SetCore("SendNotification", {Title = "FemWare"; Text = "Successful! discord.gg/femware"; Icon = "rbxassetid://9327507243"; Duration = 5 })
+        end)
+    end)
 
     local RandomCool = false
     local r = "Head"
