@@ -52,12 +52,12 @@ local S, E = pcall(function()
     local Aimbot = {
         Enabled = false,
         HitPart = "Head",
-        PredictionVelocity = 30,
+        PredictionVelocity = 100,
         TeamCheck = false,
         AimRadius = 50,
         AimlockToggleKey = Enum.KeyCode.E,
         On = false,
-        Height = 0.6,
+        Height = 0,
         Random = false,
         Hits = {"Head", "UpperTorso", "LowerTorso", "LeftFoot", "LeftLowerLeg", "LeftUpperLeg", "RightFoot", "RightLowerLeg", "RightUpperLeg", "LeftHand", "LeftLowerArm", "LeftLowerArm", "RightHand", "RightLowerArm", "RightLowerArm", "RightUpperArm", "RootPart", "Unknown"}
     }
