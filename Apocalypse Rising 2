@@ -13,6 +13,14 @@ local S, E = pcall(function()
 
     --repeat wait(0.5) until game:IsLoaded() and game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid")
 
+    for _, Connection in pairs(getconnections(game:GetService("ScriptContext").Error)) do
+        Connection:Disable()
+    end
+    
+    for _, Connection in pairs(getconnections(game:GetService("LogService").MessageOut)) do
+        Connection:Disable()
+    end
+
     --Settings--
     local ESP = {
         Enabled = false,
@@ -686,8 +694,8 @@ local S, E = pcall(function()
         end
     end)
 
-    Aim:Slider("TP Speed", 1, 200, Speed, function(v)
-        Speed = v / 10
+    Aim:Slider("TP Speed", 0.5, 200, Speed, function(v)
+        Speed = v
     end)
 
     Aim:Slider("Aimbot Prediction", 1, 100, Aimbot.PredictionVelocity, function(v)
@@ -698,7 +706,7 @@ local S, E = pcall(function()
         Aimbot.Random = v
     end)
 
-    Aim:Slider("Aimbot Height", -20, 20, Aimbot.Height, function(v)
+    Aim:Slider("Aimbot Height", 0, 20, Aimbot.Height, function(v)
         Aimbot.Height = v / 10
     end)
 
