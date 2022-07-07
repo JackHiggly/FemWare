@@ -5,7 +5,11 @@ local S, E = pcall(function()
     end
     
     _G.Fanya = "omg"
-    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "FemWare"; Text = "Executing..."; Icon = "rbxassetid://9327507243"; Duration = 10 })
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "FemWare"; Text = "discord.gg/femware"; Icon = "rbxassetid://9327507243"; Duration = 60 })
+
+    pcall(function()
+        setclipboard("discord.gg/femware")
+    end)
 
     --repeat wait(0.5) until game:IsLoaded() and game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid")
 
@@ -808,13 +812,13 @@ local S, E = pcall(function()
         end
     end)
 
-    Vis:Button("Clear Highlights", function()
-        for _, i in pairs(game:GetService("CoreGui"):GetChildren()) do
-            if i:IsA("Highlight") then
-                i:Destroy()
-            end
-        end
-    end)
+    -- Vis:Button("Clear Highlights", function()
+    --     for _, i in pairs(game:GetService("CoreGui"):GetChildren()) do
+    --         if i:IsA("Highlight") then
+    --             i:Destroy()
+    --         end
+    --     end
+    -- end)
 
     Vis:Toggle("ESP Rainbow", false, function(v)
         if v then
