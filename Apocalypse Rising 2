@@ -13,14 +13,6 @@ local S, E = pcall(function()
 
     --repeat wait(0.5) until game:IsLoaded() and game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid")
 
-    for _, Connection in pairs(getconnections(game:GetService("ScriptContext").Error)) do
-        Connection:Disable()
-    end
-    
-    for _, Connection in pairs(getconnections(game:GetService("LogService").MessageOut)) do
-        Connection:Disable()
-    end
-
     --Settings--
     local ESP = {
         Enabled = false,
@@ -73,7 +65,7 @@ local S, E = pcall(function()
     local SGui = game:GetService"StarterGui"
     local AimlockTarget;
 
-    local RAim, RAmbiance, RTime, Rrgb
+    local RAim, RAmbiance, RTime, Rrgb, HbTP
 
     -- ESP        
         --Functions--
@@ -631,11 +623,11 @@ local S, E = pcall(function()
 
     local DiscordLib = loadstring(game:HttpGet"https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/discord%20lib.txt")()
 
-    local win = DiscordLib:Window("FemWare | Apocalyse Rising 2")
+    local win = DiscordLib:Window("Apocalyse Rising 2")
 
     local serv = win:Server("FemWare", "rbxassetid://9327507243")
 
-    local Aim = serv:Channel("Aimbot")
+    local Aim = serv:Channel("Blatant")
 
     local Cli = serv:Channel("Local")
     local Vis = serv:Channel("Player ESP")
@@ -676,15 +668,37 @@ local S, E = pcall(function()
         end
     end)
 
-    Aim:Slider("Prediction", 1, 100, Aimbot.PredictionVelocity, function(v)
+    local Speed = 1
+
+    Aim:Toggle("TP Walk", false, function(v)
+
+        if v == true then
+            HbTP = game:GetService("RunService").Heartbeat:Connect(function()
+                if game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character.Humanoid and game:GetService("Players").LocalPlayer.Character.Humanoid.Parent then
+                    if game:GetService("Players").LocalPlayer.Character.Humanoid.MoveDirection.Magnitude > 0 then
+                        game:GetService("Players").LocalPlayer.Character:TranslateBy(game:GetService("Players").LocalPlayer.Character.Humanoid.MoveDirection * Speed / 10)
+                    end
+                end
+            end)
+        elseif not v and HbTP then
+            HbTP:Disconnect()
+            HbTP = nil
+        end
+    end)
+
+    Aim:Slider("TP Speed", 1, 200, Speed, function(v)
+        Speed = v / 10
+    end)
+
+    Aim:Slider("Aimbot Prediction", 1, 100, Aimbot.PredictionVelocity, function(v)
         Aimbot.PredictionVelocity = v
     end)
     
-    Aim:Toggle("Randomize", Aimbot.Random, function(v)
+    Aim:Toggle("Aimbot Randomize", Aimbot.Random, function(v)
         Aimbot.Random = v
     end)
 
-    Aim:Slider("Height", -20, 20, Aimbot.Height, function(v)
+    Aim:Slider("Aimbot Height", -20, 20, Aimbot.Height, function(v)
         Aimbot.Height = v / 10
     end)
 
