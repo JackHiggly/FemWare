@@ -623,7 +623,7 @@ local S, E = pcall(function()
 
     local DiscordLib = loadstring(game:HttpGet"https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/discord%20lib.txt")()
 
-    local win = DiscordLib:Window("Apocalyse Rising 2")
+    local win = DiscordLib:Window("Apocalyse Rising 2 by FemWare | Fanya#6470")
 
     local serv = win:Server("FemWare", "rbxassetid://9327507243")
 
