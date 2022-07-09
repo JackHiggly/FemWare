@@ -805,6 +805,7 @@ local S, E = pcall(function()
 
     Vis:Toggle("Enable ESP", ESP.Enabled, function(v)
         ESP:Toggle(v)
+        ESP.Enabled = v
     end)
 
     Vis:Toggle("Boxes", ESP.Boxes, function(v)
