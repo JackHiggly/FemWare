@@ -726,6 +726,18 @@ local S, E = pcall(function()
         end
     end)
 
+    local InfiniteJump = false
+
+    Aim:Toggle("Infinite Jump", InfiniteJump, function(v)
+        InfiniteJump = v
+    end)
+
+    game:GetService("UserInputService").InputBegan:connect(function(input)
+        if InfiniteJump and input.KeyCode == Enum.KeyCode.Space then
+            game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+        end
+    end)
+
     Aim:Toggle("No Clip", false, function(v)
         if v then
             HbNC = game:GetService("RunService").Heartbeat:Connect(function()
