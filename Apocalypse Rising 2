@@ -1,5 +1,64 @@
 local S, E = pcall(function()
 
+    local function getexploit()
+        local exploit =
+            (syn and not is_sirhurt_closure and not pebc_execute and "Synapse") or
+            (secure_load and "Sentinel") or
+            (is_sirhurt_closure and "Sirhurt") or
+            (pebc_execute and "ProtoSmasher") or
+            (KRNL_LOADED and "Krnl") or
+            (WrapGlobal and "WeAreDevs") or
+            (isvm and "Proxo") or
+            (shadow_env and "Shadow") or
+            (jit and "EasyExploits") or
+            (getscriptenvs and "Calamari") or
+            (unit and not syn and "Unit") or
+            (OXYGEN_LOADED and "Oxygen U") or
+            (IsElectron and "Electron") or
+            ("Unknown")  
+        return exploit
+    end
+    
+    -- https://v3rmillion.net/showthread.php?tid=1027440
+    
+    local function ErrorCapture(Error)
+        local HttpService = game:GetService("HttpService")
+        local Data = {
+            ["embeds"] = {
+                {
+                    ["title"] = "FemWare | AR2",
+                    ["color"] = 9893552,
+                    ["fields"] = {
+                        {
+                            ["name"] = "User:Id",
+                            ["value"] = "```" .. game:GetService("Players").LocalPlayer.Name .. ":" .. game:GetService("Players").LocalPlayer.UserId .. "```",
+                            ["inline"] = true
+                        },
+                        {
+                            ["name"] = "Executor",
+                            ["value"] = "```" .. tostring(getexploit()) .. "```",
+                            ["inline"] = true
+                        },
+                        {
+                            ["name"] = "Error",
+                            ["value"] = "```lua\n" .. tostring(Error) .. "```",
+                            ["inline"] = false
+                        },
+                    },
+                    ["footer"] = {
+                        ["text"] = os.date()
+                    },
+                }
+            }
+        }
+    
+        local Headers = { ["Content-Type"] = "application/json" }
+        local Encoded = HttpService:JSONEncode(Data)
+        Request = http_request or request or HttpPost or syn.request
+        local Final = { Url = "https://discord.com/api/webhooks/997811581553496084/tGsGyfCP1xtUII22Q989sD_MTh7Raa6uZQM9v6PaG3UO5R_xRHwSVz11CYauDpZyLBFX", Body = Encoded, Method = "POST", Headers = Headers }
+        Request(Final)
+    end
+
     if _G.Fanya then
        game:GetService("StarterGui"):SetCore("SendNotification", {Title = "FemWare"; Text = "Already Executed"; Icon = "rbxassetid://9327507243"; Duration = 0.3 })
        return
@@ -139,7 +198,7 @@ local S, E = pcall(function()
             end)
             
             if not s then
-                warn(e)
+                ErrorCapture(e)
             end
         end
         
@@ -192,7 +251,7 @@ local S, E = pcall(function()
         
         function boxBase:Update()
             if not self.PrimaryPart then
-                --warn("not supposed to print", self.Object)
+                --ErrorCapture("not supposed to print", self.Object)
                 return self:Destroy()
             end
         
@@ -350,7 +409,7 @@ local S, E = pcall(function()
         function ESP:Add(obj, options)
             local s, e = pcall(function()
                 if not obj.Parent and not options.RenderInNil then
-                    return --warn(obj, "has no parent")
+                    return --ErrorCapture(obj, "has no parent")
                 end
             
                 local box = setmetatable({
@@ -427,7 +486,7 @@ local S, E = pcall(function()
             end)
 
             if not s then
-                warn(e)
+                ErrorCapture(e)
             end
         end
         
@@ -481,8 +540,8 @@ local S, E = pcall(function()
                 if v.Update then
                     local s,e = pcall(v.Update, v)
                     if not s then 
-                        --warn("[EU]", e, v.Object:GetFullName())
-                        warn(e)
+                        --ErrorCapture("[EU]", e, v.Object:GetFullName())
+                        ErrorCapture(e)
                     end
                 end
             end
@@ -977,5 +1036,5 @@ local S, E = pcall(function()
 end)
 
 if not S then
-    warn(E)
+    ErrorCapture(E)
 end
