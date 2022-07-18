@@ -246,8 +246,6 @@
         return ((ObscuringObjects == 0 and true) or (ObscuringObjects > 0 and false))
     end
     
-    local Players = game:GetService("Players")
-
     function GetClosestPlayer()
         if not SilentSettings.Main.Enabled then return end
         local Closest
