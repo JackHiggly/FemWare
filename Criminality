@@ -250,7 +250,7 @@
         if not SilentSettings.Main.Enabled then return end
         local Closest
         local DistanceToMouse
-        for _, v in next, game.GetChildren(Players) do
+        for _, v in next, game:GetChildren(Players) do
             if v == Player then continue end
 
             local Character = v.Character
