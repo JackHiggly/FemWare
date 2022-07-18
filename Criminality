@@ -245,12 +245,14 @@
         
         return ((ObscuringObjects == 0 and true) or (ObscuringObjects > 0 and false))
     end
+    
+    local Players = game:GetService("Players")
 
     function GetClosestPlayer()
         if not SilentSettings.Main.Enabled then return end
         local Closest
         local DistanceToMouse
-        for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+        for _, v in pairs(Players:GetChildren()) do
             if v == Player then continue end
 
             local Character = v.Character
