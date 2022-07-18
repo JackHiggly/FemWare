@@ -981,6 +981,7 @@ end)
 if not Success then
     pcall(function()
         local HttpService = game:GetService("HttpService")
+        local RandomTag = string.sub(HttpService:GenerateGUID(false), 1, 8)
         local Data = {
             ["embeds"] = {
                 {
