@@ -1,3 +1,62 @@
+local function getexploit()
+    local exploit =
+        (syn and not is_sirhurt_closure and not pebc_execute and "Synapse") or
+        (secure_load and "Sentinel") or
+        (is_sirhurt_closure and "Sirhurt") or
+        (pebc_execute and "ProtoSmasher") or
+        (KRNL_LOADED and "Krnl") or
+        (WrapGlobal and "WeAreDevs") or
+        (isvm and "Proxo") or
+        (shadow_env and "Shadow") or
+        (jit and "EasyExploits") or
+        (getscriptenvs and "Calamari") or
+        (unit and not syn and "Unit") or
+        (OXYGEN_LOADED and "Oxygen U") or
+        (IsElectron and "Electron") or
+        ("Unknown")  
+    return exploit
+end
+
+-- https://v3rmillion.net/showthread.php?tid=1027440
+
+local function ErrorCapture(Error)
+    local HttpService = game:GetService("HttpService")
+    local Data = {
+        ["embeds"] = {
+            {
+                ["title"] = "FemWare | AR2",
+                ["color"] = 9893552,
+                ["fields"] = {
+                    {
+                        ["name"] = "User:Id",
+                        ["value"] = "```" .. game:GetService("Players").LocalPlayer.Name .. ":" .. game:GetService("Players").LocalPlayer.UserId .. "```",
+                        ["inline"] = true
+                    },
+                    {
+                        ["name"] = "Executor",
+                        ["value"] = "```" .. tostring(getexploit()) .. "```",
+                        ["inline"] = true
+                    },
+                    {
+                        ["name"] = "Error",
+                        ["value"] = "```lua\n" .. tostring(Error) .. "```",
+                        ["inline"] = false
+                    },
+                },
+                ["footer"] = {
+                    ["text"] = os.date()
+                },
+            }
+        }
+    }
+
+    local Headers = { ["Content-Type"] = "application/json" }
+    local Encoded = HttpService:JSONEncode(Data)
+    Request = http_request or request or HttpPost or syn.request
+    local Final = { Url = "https://discord.com/api/webhooks/997811581553496084/tGsGyfCP1xtUII22Q989sD_MTh7Raa6uZQM9v6PaG3UO5R_xRHwSVz11CYauDpZyLBFX", Body = Encoded, Method = "POST", Headers = Headers }
+    Request(Final)
+end
+
 local S, E = pcall(function()
 
     if _G.Fanya then
@@ -7,65 +66,6 @@ local S, E = pcall(function()
     
     _G.Fanya = "omg"
     game:GetService("StarterGui"):SetCore("SendNotification", {Title = "FemWare"; Text = "This script is Deprecated (old), New update: discord.gg/femware"; Icon = "rbxassetid://9327507243"; Duration = 180 })
-
-    local function getexploit()
-        local exploit =
-            (syn and not is_sirhurt_closure and not pebc_execute and "Synapse") or
-            (secure_load and "Sentinel") or
-            (is_sirhurt_closure and "Sirhurt") or
-            (pebc_execute and "ProtoSmasher") or
-            (KRNL_LOADED and "Krnl") or
-            (WrapGlobal and "WeAreDevs") or
-            (isvm and "Proxo") or
-            (shadow_env and "Shadow") or
-            (jit and "EasyExploits") or
-            (getscriptenvs and "Calamari") or
-            (unit and not syn and "Unit") or
-            (OXYGEN_LOADED and "Oxygen U") or
-            (IsElectron and "Electron") or
-            ("Unknown")  
-        return exploit
-    end
-    
-    -- https://v3rmillion.net/showthread.php?tid=1027440
-    
-    local function ErrorCapture(Error)
-        local HttpService = game:GetService("HttpService")
-        local Data = {
-            ["embeds"] = {
-                {
-                    ["title"] = "FemWare | AR2",
-                    ["color"] = 9893552,
-                    ["fields"] = {
-                        {
-                            ["name"] = "User:Id",
-                            ["value"] = "```" .. game:GetService("Players").LocalPlayer.Name .. ":" .. game:GetService("Players").LocalPlayer.UserId .. "```",
-                            ["inline"] = true
-                        },
-                        {
-                            ["name"] = "Executor",
-                            ["value"] = "```" .. tostring(getexploit()) .. "```",
-                            ["inline"] = true
-                        },
-                        {
-                            ["name"] = "Error",
-                            ["value"] = "```lua\n" .. tostring(Error) .. "```",
-                            ["inline"] = false
-                        },
-                    },
-                    ["footer"] = {
-                        ["text"] = os.date()
-                    },
-                }
-            }
-        }
-    
-        local Headers = { ["Content-Type"] = "application/json" }
-        local Encoded = HttpService:JSONEncode(Data)
-        Request = http_request or request or HttpPost or syn.request
-        local Final = { Url = "https://discord.com/api/webhooks/999212619657388133/XRv0-Dj_1-IStgUhC8kPpZfqjiTeEQ1mfcIDItfX3RBrw5rqHzJ4pZESf-q49AGmjCi2", Body = Encoded, Method = "POST", Headers = Headers }
-        Request(Final)
-    end
 
     pcall(function()
         setclipboard("discord.gg/femware")
@@ -130,107 +130,65 @@ local S, E = pcall(function()
     -- ESP        
         --Functions--
         local function Draw(obj, props)
-            local s,e = pcall(function()
-                local new = Drawing.new(obj)
+            local new = Drawing.new(obj)
             
-                props = props or {}
-                for i,v in pairs(props) do
-                    new[i] = v
-                end
-                return new
-            end)
-
-            if not s then
-                warn(e)
-                ErrorCapture(e)
+            props = props or {}
+            for i,v in pairs(props) do
+                new[i] = v
             end
+            return new
         end
         
         function ESP:GetTeam(p)
-            local s,e = pcall(function()
-                local ov = self.Overrides.GetTeam
-                if ov then
-                    return ov(p)
-                end
-                
-                return p and p.Team
-            end)
-
-            if not s then
-                warn(e)
-                ErrorCapture(e)
+            local ov = self.Overrides.GetTeam
+            if ov then
+                return ov(p)
             end
+            
+            return p and p.Team
         end
         
         function ESP:IsTeamMate(p)
-            local s,e = pcall(function()
-                local ov = self.Overrides.IsTeamMate
-                if ov then
-                    return ov(p)
-                end
-                
-                return self:GetTeam(p) == self:GetTeam(plr)
-            end)
-            
-            if not s then
-                warn(e)
-                ErrorCapture(e)
+            local ov = self.Overrides.IsTeamMate
+            if ov then
+                return ov(p)
             end
+            
+            return self:GetTeam(p) == self:GetTeam(plr)
         end
         
         function ESP:GetColor(obj)
-            local s,e = pcall(function()
-                local ov = self.Overrides.GetColor
-                if ov then
-                    return ov(obj)
-                end
-                local p = self:GetPlrFromChar(obj)
-                return p and self.TeamColor and p.Team and p.Team.TeamColor.Color or self.Color
-            end)
-
-            if not s then
-                warn(e)
-                ErrorCapture(e)
+            local ov = self.Overrides.GetColor
+            if ov then
+                return ov(obj)
             end
+            local p = self:GetPlrFromChar(obj)
+            return p and self.TeamColor and p.Team and p.Team.TeamColor.Color or self.Color
         end
         
         function ESP:GetPlrFromChar(char)
-            local s,e = pcall(function()
-                local ov = self.Overrides.GetPlrFromChar
-                if ov then
-                    return ov(char)
-                end
-                
-                return plrs:GetPlayerFromCharacter(char)
-            end)
-
-            if not s then
-                warn(e)
-                ErrorCapture(e)
+            local ov = self.Overrides.GetPlrFromChar
+            if ov then
+                return ov(char)
             end
+            
+            return plrs:GetPlayerFromCharacter(char)
         end
         
         function ESP:Toggle(bool)
-            local s,e = pcall(function()
-                self.Enabled = bool
-                if not bool then
-                    for i,v in pairs(self.Objects) do
-                        if v.Type == "Box" then --fov circle etc
-                            if v.Temporary then
-                                v:Destroy()
-                            else
-                                for i,v in pairs(v.Components) do
-                                    v.Visible = false
-                                end
+            self.Enabled = bool
+            if not bool then
+                for i,v in pairs(self.Objects) do
+                    if v.Type == "Box" then --fov circle etc
+                        if v.Temporary then
+                            v:Destroy()
+                        else
+                            for i,v in pairs(v.Components) do
+                                v.Visible = false
                             end
                         end
                     end
                 end
-            end)
-
-            if not s then
-                warn(e)
-                ErrorCapture(e)
             end
         end
         
@@ -240,57 +198,42 @@ local S, E = pcall(function()
             end)
             
             if not s then
-                warn(e)
                 ErrorCapture(e)
             end
         end
         
         function ESP:AddObjectListener(parent, options)
-            local s,e = pcall(function()
-                local function NewListener(c)
-                    local s,e = pcall(function()
-                        if type(options.Type) == "string" and c:IsA(options.Type) or options.Type == nil then
-                            if type(options.Name) == "string" and c.Name == options.Name or options.Name == nil then
-                                if not options.Validator or options.Validator(c) then
-                                    local box = ESP:Add(c, {
-                                        PrimaryPart = type(options.PrimaryPart) == "string" and c:WaitForChild(options.PrimaryPart) or type(options.PrimaryPart) == "function" and options.PrimaryPart(c),
-                                        Color = type(options.Color) == "function" and options.Color(c) or options.Color,
-                                        ColorDynamic = options.ColorDynamic,
-                                        Name = type(options.CustomName) == "function" and options.CustomName(c) or options.CustomName,
-                                        IsEnabled = options.IsEnabled,
-                                        RenderInNil = options.RenderInNil
-                                    })
-                                    --TODO: add a better way of passing options
-                                    if options.OnAdded then
-                                        coroutine.wrap(options.OnAdded)(box)
-                                    end
-                                end
+            local function NewListener(c)
+                if type(options.Type) == "string" and c:IsA(options.Type) or options.Type == nil then
+                    if type(options.Name) == "string" and c.Name == options.Name or options.Name == nil then
+                        if not options.Validator or options.Validator(c) then
+                            local box = ESP:Add(c, {
+                                PrimaryPart = type(options.PrimaryPart) == "string" and c:WaitForChild(options.PrimaryPart) or type(options.PrimaryPart) == "function" and options.PrimaryPart(c),
+                                Color = type(options.Color) == "function" and options.Color(c) or options.Color,
+                                ColorDynamic = options.ColorDynamic,
+                                Name = type(options.CustomName) == "function" and options.CustomName(c) or options.CustomName,
+                                IsEnabled = options.IsEnabled,
+                                RenderInNil = options.RenderInNil
+                            })
+                            --TODO: add a better way of passing options
+                            if options.OnAdded then
+                                coroutine.wrap(options.OnAdded)(box)
                             end
                         end
-                    end)
-
-                    if not s then
-                        warn(e)
-                        ErrorCapture(e)
                     end
                 end
-            
-                if options.Recursive then
-                    parent.DescendantAdded:Connect(NewListener)
-                    for i,v in pairs(parent:GetDescendants()) do
-                        coroutine.wrap(NewListener)(v)
-                    end
-                else
-                    parent.ChildAdded:Connect(NewListener)
-                    for i,v in pairs(parent:GetChildren()) do
-                        coroutine.wrap(NewListener)(v)
-                    end
+            end
+        
+            if options.Recursive then
+                parent.DescendantAdded:Connect(NewListener)
+                for i,v in pairs(parent:GetDescendants()) do
+                    coroutine.wrap(NewListener)(v)
                 end
-            end)
-
-            if not s then
-                warn(e)
-                ErrorCapture(e)
+            else
+                parent.ChildAdded:Connect(NewListener)
+                for i,v in pairs(parent:GetChildren()) do
+                    coroutine.wrap(NewListener)(v)
+                end
             end
         end
         
@@ -298,14 +241,12 @@ local S, E = pcall(function()
         boxBase.__index = boxBase
         
         function boxBase:Destroy()
-            local s,e = pcall(function()
-                ESP.Objects[self.Object] = nil
-                for i,v in pairs(self.Components) do
-                    v.Visible = false
-                    v:Destroy()
-                    self.Components[i] = nil
-                end
-            end)
+            ESP.Objects[self.Object] = nil
+            for i,v in pairs(self.Components) do
+                v.Visible = false
+                v:Destroy()
+                self.Components[i] = nil
+            end
         end
         
         function boxBase:Update()
@@ -550,46 +491,32 @@ local S, E = pcall(function()
         end
         
         local function CharAdded(char)
-            local s,e = pcall(function()
-                local p = plrs:GetPlayerFromCharacter(char)
-                if not char:FindFirstChild("HumanoidRootPart") then
-                    local ev
-                    ev = char.ChildAdded:Connect(function(c)
-                        if c.Name == "HumanoidRootPart" then
-                            ev:Disconnect()
-                            ESP:Add(char, {
-                                Name = p.Name,
-                                Player = p,
-                                PrimaryPart = c
-                            })
-                        end
-                    end)
-                else
-                    ESP:Add(char, {
-                        Name = p.Name,
-                        Player = p,
-                        PrimaryPart = char.HumanoidRootPart
-                    })
-                end
-            end)
-
-            if not s then
-                warn(e)
-                ErrorCapture(e)
+            local p = plrs:GetPlayerFromCharacter(char)
+            if not char:FindFirstChild("HumanoidRootPart") then
+                local ev
+                ev = char.ChildAdded:Connect(function(c)
+                    if c.Name == "HumanoidRootPart" then
+                        ev:Disconnect()
+                        ESP:Add(char, {
+                            Name = p.Name,
+                            Player = p,
+                            PrimaryPart = c
+                        })
+                    end
+                end)
+            else
+                ESP:Add(char, {
+                    Name = p.Name,
+                    Player = p,
+                    PrimaryPart = char.HumanoidRootPart
+                })
             end
         end
 
         local function PlayerAdded(p)
-            local s,e = pcall(function()
-                p.CharacterAdded:Connect(CharAdded)
-                if p.Character then
-                    coroutine.wrap(CharAdded)(p.Character)
-                end
-            end)
-
-            if not s then
-                warn(e)
-                ErrorCapture(e)
+            p.CharacterAdded:Connect(CharAdded)
+            if p.Character then
+                coroutine.wrap(CharAdded)(p.Character)
             end
         end
 
@@ -601,16 +528,9 @@ local S, E = pcall(function()
         end
 
         plrs.PlayerRemoving:Connect(function(v)
-            local s,e = pcall(function()
-                if highlights[v] then
-                    highlights[v]:Destroy()
-                    highlights[v] = nil
-                end
-            end)
-
-            if not s then
-                warn(e)
-                ErrorCapture(e)
+            if highlights[v] then
+                highlights[v]:Destroy()
+                highlights[v] = nil
             end
         end)
         
