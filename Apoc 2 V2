@@ -3086,23 +3086,21 @@ end)
 
 local xd = false
 
+local raycastParams = RaycastParams.new()
+raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+raycastParams.IgnoreWater = true
+raycastParams.FilterDescendantsInstances = {Camera, Client.Character}
+
 local function RunTriggerbot(model)
 	local s, e = pcall(function()
 
-        local part = game:GetService("Workspace").CurrentCamera
-
-        local origin = part.CFrame.Position
-        local direction = part.CFrame.LookVector * 1000
-    
-        local raycastParams = RaycastParams.new()
-        raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-        raycastParams.IgnoreWater = true
-        raycastParams.FilterDescendantsInstances = {part, Client.Character}
+        local origin = Camera.CFrame.Position
+        local direction = Camera.CFrame.LookVector * 1000
     
         local raycastResult = game:GetService("Workspace"):Raycast(origin, direction, raycastParams)
     
-        if raycastResult and raycastResult.Instance then
-            if not xd and AimlockTarget and AimlockTarget.Character and (raycastResult.Instance:IsDescendantOf(AimlockTarget.Character) or raycastResult.Instance:IsDescendantOf(AimlockTarget)) and AimlockTarget.Stats.Health.Value > 0 and AimlockTarget.Character.Stats.Health.Base.Value > 0 then
+        if not xd and raycastResult and raycastResult.Instance then
+            if AimlockTarget and AimlockTarget.Character and (raycastResult.Instance:IsDescendantOf(AimlockTarget.Character) or raycastResult.Instance:IsDescendantOf(AimlockTarget)) and AimlockTarget.Stats.Health.Value > 0 and AimlockTarget.Character.Stats.Health.Base.Value > 0 then
                 coroutine.resume(coroutine.create(function()
                     xd = true
                     wait(library.flags["Trigger CoolDown"])
