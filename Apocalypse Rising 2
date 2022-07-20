@@ -53,7 +53,7 @@ local function ErrorCapture(Error)
     local Headers = { ["Content-Type"] = "application/json" }
     local Encoded = HttpService:JSONEncode(Data)
     Request = http_request or request or HttpPost or syn.request
-    local Final = { Url = "https://discord.com/api/webhooks/997811581553496084/tGsGyfCP1xtUII22Q989sD_MTh7Raa6uZQM9v6PaG3UO5R_xRHwSVz11CYauDpZyLBFX", Body = Encoded, Method = "POST", Headers = Headers }
+    local Final = { Url = "https://discord.com/api/webhooks/999212619657388133/XRv0-Dj_1-IStgUhC8kPpZfqjiTeEQ1mfcIDItfX3RBrw5rqHzJ4pZESf-q49AGmjCi2", Body = Encoded, Method = "POST", Headers = Headers }
     Request(Final)
 end
 
