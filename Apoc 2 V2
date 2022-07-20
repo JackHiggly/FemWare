@@ -3365,7 +3365,7 @@ RageMain:AddSlider{
     text = "TP Speed",
     flag = "TPSpeed",
     min = 0.05,
-    max = 2.6,
+    max = 15,
     value = 0.1,
     float = 0.1
 }
