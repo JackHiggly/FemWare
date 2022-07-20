@@ -3375,7 +3375,7 @@ RageMain:AddSlider{
     text = "TP Speed",
     flag = "TPSpeed",
     min = 0.05,
-    max = 15,
+    max = 2.6,
     value = 0.1,
     float = 0.1
 }
@@ -3802,362 +3802,356 @@ PlayerEspSection:AddToggle({
 				return
 			end
 			OldStep = 0
-			local s, e = pcall(function()
-                for Player, Data in next, Players do
-                    if Player == Client then
-                        continue
-                    end
-                    local Objects = ESPObjects[Player]
-                    local Character = Data.Character
-                    local Show
-                    local Team = Data.Enemy
-                    if Data.Whitelist then
-                        Show = library.flags["Esp Show Whitelisted"]
-                    else
-                        Show = Data.Priority or Team
-                    end
-                    if Show and Character then
-                        local Health = Character.Stats.Health.Base.Value
-                        if Health > 0.1 then
-                            Team = Team and "Enemy" or "Team"
-                            local Pos, Size = GBB(Character)
-                            local RootPart = FFC(Character, "HumanoidRootPart")
-                            if RootPart and (Pos.Position - RootPart.Position).Magnitude > 5 then
-                                Pos = RootPart.CFrame
-                            end
-                            local Distance = (Camera.CFrame.p - Pos.Position).Magnitude
-                            if Distance < library.flags["Esp Max Distance"] then
-                                local ScreenPosition, OnScreen = WTVP(Camera, Pos.Position)
-                                local ClientChar = Players[Client].Character
-                                local Ignores = {
-                                    Camera,
-                                    ClientChar
-                                }
-                                if library.flags["Visible Check"] then
-                                    local Hit = RayCheck(ClientChar, Pos.Position, Distance)
-                                    Hit = Hit and Hit.Instance and FFA(Hit.Instance, Character.Name)
-                                    Hit = Hit and Hit == Character
-                                end
-                                local Occluded = Hit and " " or " Occluded "
-                                local Visible = true
-                                if library.flags[Team .. " Visible Only"] then
-                                    Visible = Hit ~= nil
-                                end
-                                local Color = (library.flags["Highlight Target"] and library.Aimbot.Player == Player and library.flags["Aimbot Highlight Color"])
-                                Color = Color or (Data.Priority and library.flags["Player Priority Color"] or Data.Whitelist and library.flags["Player Whitelist Color"])
-                                Color = Color
-    
-                                --
-                                if library.flags["Radar Enabled"] and Distance < RadarWindow.Radius then
-                                    Objects.RadarBlip.Visible = true
-                                    local RelativePos = Camera.CFrame:Inverse() * Pos.Position
-                                    local Middle = Camera.ViewportSize / 2
-                                    local Degrees = math.deg(math.atan2(- RelativePos.Y, RelativePos.X)) * math.pi / 180
-                                    local EndPos = Middle + (Vector2.new(math.cos(Degrees), math.sin(Degrees)) * Distance)
-                                    Objects.RadarBlip.Position = EndPos
-                                    Objects.RadarBlip.Color = Color or Color3.new(1, 1, 1)
-                                    if not Objects.Visible then
-                                        continue
-                                    end
-                                else
-                                    Objects.RadarBlip.Visible = false
-                                end
-                                --]]
-                                if Visible then
-                                    local Transparency = (Data.Priority) and 1 or 1 - (Distance / library.flags["Esp Max Distance"])
-                                    if OnScreen then
-                                        Objects.Visible = true
-                                        Objects.OOVArrow.Visible = false
-    
-                                        --local xMin, yMin = 9e9, 9e9
-                                        --local xMax, yMax = 0, 0
-                                        local BoxColor = Color or library.flags[Team .. Occluded .. "Box Color"]
-                                        local TextColor = Color or library.flags[Team .. Occluded .. "Info Color"]
-                                        local ToolColor = Color or library.flags[Team .. Occluded .. "Tool Color"]
-                                        local InventoryColor = Color or library.flags[Team .. Occluded .. "Inventory Color"]
-                                        local LookColor = Color or library.flags[Team .. Occluded .. "Look Color"]
-                                        local ChamsColor = Color or library.flags[Team .. Occluded .. "Chams Color"]
-                                        local ChamsOutlineColor = Color or library.flags[Team .. Occluded .. "Chams Outline Color"]
-                                        local DirectionColor = Color or library.flags[Team .. Occluded .. "Direction Color"]
-    
-                                        --Chams
-                                        if library.flags[Team .. " Chams Enabled"] and Distance < 600 then
-                                            Objects.ChamsVisible = true
-                                            Objects.Chams.Parent = library.base
-                                            Objects.ChamsStep = Objects.ChamsStep + Step
-                                            if Objects.ChamsStep > 0.2 then
-                                                Objects.ChamsStep = 0
-                                                for _, PartName in next, UseBodyParts do
-                                                    local Part = FFC(Character, PartName, true)
-                                                    if Part then
-                                                        local Cham = FFC(Objects.Chams, PartName) or (function()
+			for Player, Data in next, Players do
+                if Player == Client then
+                    continue
+                end
+                local Objects = ESPObjects[Player]
+                local Character = Data.Character
+                local Show
+                local Team = Data.Enemy
+                if Data.Whitelist then
+                    Show = library.flags["Esp Show Whitelisted"]
+                else
+                    Show = Data.Priority or Team
+                end
+                if Show and Character then
+                    local Health = Character.Stats.Health.Base.Value
+                    if Health > 0.1 then
+                        Team = Team and "Enemy" or "Team"
+                        local Pos, Size = GBB(Character)
+                        local RootPart = FFC(Character, "HumanoidRootPart")
+                        if RootPart and (Pos.Position - RootPart.Position).Magnitude > 5 then
+                            Pos = RootPart.CFrame
+                        end
+                        local Distance = (Camera.CFrame.p - Pos.Position).Magnitude
+                        if Distance < library.flags["Esp Max Distance"] then
+                            local ScreenPosition, OnScreen = WTVP(Camera, Pos.Position)
+                            local ClientChar = Players[Client].Character
+                            local Ignores = {
+                                Camera,
+                                ClientChar
+                            }
+                            -- if library.flags["Visible Check"] then
+                            --     local Hit = RayCheck(ClientChar, Pos.Position, Distance)
+                            --     Hit = Hit and Hit.Instance and FFA(Hit.Instance, Character.Name)
+                            --     Hit = Hit and Hit == Character
+                            -- end
+                            local Occluded = Hit and " " or " Occluded "
+                            local Visible = true
+                            -- if library.flags[Team .. " Visible Only"] then
+                            --     Visible = Hit ~= nil
+                            -- end
+                            local Color = (library.flags["Highlight Target"] and library.Aimbot.Player == Player and library.flags["Aimbot Highlight Color"])
+                            Color = Color or (Data.Priority and library.flags["Player Priority Color"] or Data.Whitelist and library.flags["Player Whitelist Color"])
+                            Color = Color
+
+                            --
+                            -- if library.flags["Radar Enabled"] and Distance < RadarWindow.Radius then
+                            --     Objects.RadarBlip.Visible = true
+                            --     local RelativePos = Camera.CFrame:Inverse() * Pos.Position
+                            --     local Middle = Camera.ViewportSize / 2
+                            --     local Degrees = math.deg(math.atan2(- RelativePos.Y, RelativePos.X)) * math.pi / 180
+                            --     local EndPos = Middle + (Vector2.new(math.cos(Degrees), math.sin(Degrees)) * Distance)
+                            --     Objects.RadarBlip.Position = EndPos
+                            --     Objects.RadarBlip.Color = Color or Color3.new(1, 1, 1)
+                            --     if not Objects.Visible then
+                            --         continue
+                            --     end
+                            -- else
+                            --     Objects.RadarBlip.Visible = false
+                            -- end
+                            --]]
+                            if Visible then
+                                local Transparency = (Data.Priority) and 1 or 1 - (Distance / library.flags["Esp Max Distance"])
+                                if OnScreen then
+                                    Objects.Visible = true
+                                    Objects.OOVArrow.Visible = false
+
+                                    --local xMin, yMin = 9e9, 9e9
+                                    --local xMax, yMax = 0, 0
+                                    local BoxColor = Color or library.flags[Team .. Occluded .. "Box Color"]
+                                    local TextColor = Color or library.flags[Team .. Occluded .. "Info Color"]
+                                    local ToolColor = Color or library.flags[Team .. Occluded .. "Tool Color"]
+                                    local InventoryColor = Color or library.flags[Team .. Occluded .. "Inventory Color"]
+                                    local LookColor = Color or library.flags[Team .. Occluded .. "Look Color"]
+                                    local ChamsColor = Color or library.flags[Team .. Occluded .. "Chams Color"]
+                                    local ChamsOutlineColor = Color or library.flags[Team .. Occluded .. "Chams Outline Color"]
+                                    local DirectionColor = Color or library.flags[Team .. Occluded .. "Direction Color"]
+
+                                    --Chams
+                                    if library.flags[Team .. " Chams Enabled"] and Distance < 600 then
+                                        Objects.ChamsVisible = true
+                                        Objects.Chams.Parent = library.base
+                                        Objects.ChamsStep = Objects.ChamsStep + Step
+                                        if Objects.ChamsStep > 0.2 then
+                                            Objects.ChamsStep = 0
+                                            for _, PartName in next, UseBodyParts do
+                                                local Part = FFC(Character, PartName, true)
+                                                if Part then
+                                                    local Cham = FFC(Objects.Chams, PartName) or (function()
+                                                        return library:Create("BoxHandleAdornment", {
+                                                            Name = PartName,
+                                                            AlwaysOnTop = true,
+                                                            ZIndex = 2,
+                                                            Parent = Objects.Chams
+                                                        })
+                                                    end)()
+                                                    Cham.Size = Part.Size
+                                                    Cham.Adornee = Part
+                                                    Cham.Transparency = library.flags[Team .. " Chams Transparency"]
+                                                    Cham.Color3 = ChamsColor
+                                                    if library.flags[Team .. " Chams Outline"] then
+                                                        Objects.ChamsOutlineVisible = true
+                                                        Objects.ChamsOutline.Parent = library.base
+                                                        Cham = FFC(Objects.ChamsOutline, PartName) or (function()
                                                             return library:Create("BoxHandleAdornment", {
                                                                 Name = PartName,
                                                                 AlwaysOnTop = true,
-                                                                ZIndex = 2,
-                                                                Parent = Objects.Chams
+                                                                ZIndex = 1,
+                                                                Parent = Objects.ChamsOutline
                                                             })
                                                         end)()
-                                                        Cham.Size = Part.Size
+                                                        Cham.Size = Part.Size * 1.2
                                                         Cham.Adornee = Part
                                                         Cham.Transparency = library.flags[Team .. " Chams Transparency"]
-                                                        Cham.Color3 = ChamsColor
-                                                        if library.flags[Team .. " Chams Outline"] then
-                                                            Objects.ChamsOutlineVisible = true
-                                                            Objects.ChamsOutline.Parent = library.base
-                                                            Cham = FFC(Objects.ChamsOutline, PartName) or (function()
-                                                                return library:Create("BoxHandleAdornment", {
-                                                                    Name = PartName,
-                                                                    AlwaysOnTop = true,
-                                                                    ZIndex = 1,
-                                                                    Parent = Objects.ChamsOutline
-                                                                })
-                                                            end)()
-                                                            Cham.Size = Part.Size * 1.2
-                                                            Cham.Adornee = Part
-                                                            Cham.Transparency = library.flags[Team .. " Chams Transparency"]
-                                                            Cham.Color3 = ChamsOutlineColor
-                                                        else
-                                                            if Objects.ChamsOutlineVisible then
-                                                                Objects.InvisChamsOutline()
-                                                            end
-                                                        end
+                                                        Cham.Color3 = ChamsOutlineColor
                                                     else
-                                                        local Cham = FFC(Objects.Chams, PartName)
-                                                        if Cham then
-                                                            Cham.Visible = false
+                                                        if Objects.ChamsOutlineVisible then
+                                                            Objects.InvisChamsOutline()
                                                         end
-                                                        Cham = FFC(Objects.ChamsOutline, PartName)
-                                                        if Cham then
-                                                            Cham.Visible = true
-                                                        end
+                                                    end
+                                                else
+                                                    local Cham = FFC(Objects.Chams, PartName)
+                                                    if Cham then
+                                                        Cham.Visible = false
+                                                    end
+                                                    Cham = FFC(Objects.ChamsOutline, PartName)
+                                                    if Cham then
+                                                        Cham.Visible = true
                                                     end
                                                 end
                                             end
-                                        else
-                                            if Objects.ChamsVisible then
-                                                Objects.InvisChams()
-                                                Objects.InvisChamsOutline()
-                                            end
                                         end
-    
-                                        --ESP
-                                        local Height = (Camera.CFrame - Camera.CFrame.p) * Vector3.new(0, (math.clamp(Size.Y, 1, 10) + 0.5) / 2, 0)
-                                        Height = math.abs(WTSP(Camera, Pos.Position + Height).Y - WTSP(Camera, Pos.Position - Height).Y)
-                                        --local ViewportSize = Camera.ViewportSize
-                                        --local Size = ((ViewportSize.X + ViewportSize.Y) / Distance) * (1 - (Camera.FieldOfView / 200))
-                                        Size = library.round(Vector2.new(Height / 2, Height))
-                                        local Position = library.round(Vector2.new(ScreenPosition.X, ScreenPosition.Y) - (Size / 2))
-                                        if library.flags[Team .. " Box Enabled"] then
-                                            Objects.Box.Visible = true
-                                            Objects.Box.Color = BoxColor
-                                            Objects.Box.Size = Size
-                                            Objects.Box.Position = Position
-                                            Objects.Box.Transparency = Transparency
-                                            Objects.Box.Filled = false
-                                            Objects.BoxOutline.Visible = true
-                                            Objects.BoxOutline.Size = Size + V222
-                                            Objects.BoxOutline.Position = Position - V211
-                                            Objects.BoxOutline.Transparency = Transparency
-                                            Objects.BoxOutline.Filled = false
-                                            Objects.BoxInline.Visible = true
-                                            Objects.BoxInline.Size = Size - V222
-                                            Objects.BoxInline.Position = Position + V211
-                                            Objects.BoxInline.Transparency = Transparency
-                                            Objects.BoxInline.Filled = false
-                                        else
-                                            Objects.Box.Visible = false
-                                            Objects.BoxOutline.Visible = false
-                                            Objects.BoxInline.Visible = false
+                                    else
+                                        if Objects.ChamsVisible then
+                                            Objects.InvisChams()
+                                            Objects.InvisChamsOutline()
                                         end
-                                        if library.flags[Team .. " Health Enabled"] then
-                                            local MaxHealth = 100 + Character.Stats.Health.Bonus.Value -- Data.MaxHealth
-                                            local HealthPerc = Health / MaxHealth
-                                            local Position = Position - HealthBarAddon
-                                            local Size = Vector2.new(1, Size.Y)
-                                            Objects.BarOutline.Visible = true
-                                            Objects.BarOutline.Position = Position - V211
-                                            Objects.BarOutline.Size = Size + V222
-                                            Objects.BarOutline.Transparency = Transparency
-                                            Objects.Bar.Visible = true
-                                            Objects.Bar.Color = Color3.new(1 - HealthPerc, HealthPerc, 0.2)
-                                            Objects.Bar.Position = Position + Vector2.new(0, Size.Y)
-                                            Objects.Bar.Size = Vector2.new(1, - Size.Y * HealthPerc)
-                                            Objects.Bar.Transparency = Transparency
-                                            Objects.HealthText.Visible = HealthPerc < 0.99
-                                            Objects.HealthText.Position = Objects.Bar.Position + Objects.Bar.Size - Vector2.new(0, 7)
-                                            Objects.HealthText.Text = tostring(library.round(Health)) or ""
-                                            Objects.HealthText.Transparency = Transparency
-                                        else
-                                            Objects.BarOutline.Visible = false
-                                            Objects.Bar.Visible = false
-                                            Objects.HealthText.Visible = false
-                                        end
-                                        if library.flags[Team .. " Info"] then
-                                            Objects.NameText.Visible = true
-                                            Objects.NameText.Text = Player.Name
-                                            Objects.NameText.Position = Position + Vector2.new(Size.X / 2, - Objects.NameText.TextBounds.Y - 1)
-                                            Objects.NameText.Color = TextColor
-                                            Objects.NameText.Transparency = Transparency
-                                            Objects.DistanceText.Visible = true
-                                            Objects.DistanceText.Text = "[" .. library.round(Distance) .. "m]"
-                                            Objects.DistanceText.Position = Position + Vector2.new(Size.X / 2, Size.Y + 2)
-                                            Objects.DistanceText.Color = TextColor
-                                            Objects.DistanceText.Transparency = Transparency
-                                        else
-                                            Objects.NameText.Visible = false
-                                            Objects.DistanceText.Visible = false
-                                        end
-                                        if library.flags[Team .. " Tool"] then
-                                            Objects.ToolText.Visible = true
-                                            if Character.Equipped:FindFirstChildOfClass("Model") then
-                                                Objects.ToolText.Text = "[" .. Character.Equipped:FindFirstChildOfClass("Model").Name .. "]"
-                                            else
-                                                Objects.ToolText.Visible = false
-                                            end
-                                            Objects.ToolText.Position = Position + Vector2.new(Size.X / 16, Size.Y + 16)
-                                            Objects.ToolText.Color = ToolColor
-                                            Objects.ToolText.Transparency = Transparency
+                                    end
+
+                                    --ESP
+                                    local Height = (Camera.CFrame - Camera.CFrame.p) * Vector3.new(0, (math.clamp(Size.Y, 1, 10) + 0.5) / 2, 0)
+                                    Height = math.abs(WTSP(Camera, Pos.Position + Height).Y - WTSP(Camera, Pos.Position - Height).Y)
+                                    --local ViewportSize = Camera.ViewportSize
+                                    --local Size = ((ViewportSize.X + ViewportSize.Y) / Distance) * (1 - (Camera.FieldOfView / 200))
+                                    Size = library.round(Vector2.new(Height / 2, Height))
+                                    local Position = library.round(Vector2.new(ScreenPosition.X, ScreenPosition.Y) - (Size / 2))
+                                    if library.flags[Team .. " Box Enabled"] then
+                                        Objects.Box.Visible = true
+                                        Objects.Box.Color = BoxColor
+                                        Objects.Box.Size = Size
+                                        Objects.Box.Position = Position
+                                        Objects.Box.Transparency = Transparency
+                                        Objects.Box.Filled = false
+                                        Objects.BoxOutline.Visible = true
+                                        Objects.BoxOutline.Size = Size + V222
+                                        Objects.BoxOutline.Position = Position - V211
+                                        Objects.BoxOutline.Transparency = Transparency
+                                        Objects.BoxOutline.Filled = false
+                                        Objects.BoxInline.Visible = true
+                                        Objects.BoxInline.Size = Size - V222
+                                        Objects.BoxInline.Position = Position + V211
+                                        Objects.BoxInline.Transparency = Transparency
+                                        Objects.BoxInline.Filled = false
+                                    else
+                                        Objects.Box.Visible = false
+                                        Objects.BoxOutline.Visible = false
+                                        Objects.BoxInline.Visible = false
+                                    end
+                                    if library.flags[Team .. " Health Enabled"] then
+                                        local MaxHealth = 100 + Character.Stats.Health.Bonus.Value -- Data.MaxHealth
+                                        local HealthPerc = Health / MaxHealth
+                                        local Position = Position - HealthBarAddon
+                                        local Size = Vector2.new(1, Size.Y)
+                                        Objects.BarOutline.Visible = true
+                                        Objects.BarOutline.Position = Position - V211
+                                        Objects.BarOutline.Size = Size + V222
+                                        Objects.BarOutline.Transparency = Transparency
+                                        Objects.Bar.Visible = true
+                                        Objects.Bar.Color = Color3.new(1 - HealthPerc, HealthPerc, 0.2)
+                                        Objects.Bar.Position = Position + Vector2.new(0, Size.Y)
+                                        Objects.Bar.Size = Vector2.new(1, - Size.Y * HealthPerc)
+                                        Objects.Bar.Transparency = Transparency
+                                        Objects.HealthText.Visible = HealthPerc < 0.99
+                                        Objects.HealthText.Position = Objects.Bar.Position + Objects.Bar.Size - Vector2.new(0, 7)
+                                        Objects.HealthText.Text = tostring(library.round(Health)) or ""
+                                        Objects.HealthText.Transparency = Transparency
+                                    else
+                                        Objects.BarOutline.Visible = false
+                                        Objects.Bar.Visible = false
+                                        Objects.HealthText.Visible = false
+                                    end
+                                    if library.flags[Team .. " Info"] then
+                                        Objects.NameText.Visible = true
+                                        Objects.NameText.Text = Player.Name
+                                        Objects.NameText.Position = Position + Vector2.new(Size.X / 2, - Objects.NameText.TextBounds.Y - 1)
+                                        Objects.NameText.Color = TextColor
+                                        Objects.NameText.Transparency = Transparency
+                                        Objects.DistanceText.Visible = true
+                                        Objects.DistanceText.Text = "[" .. library.round(Distance) .. "m]"
+                                        Objects.DistanceText.Position = Position + Vector2.new(Size.X / 2, Size.Y + 2)
+                                        Objects.DistanceText.Color = TextColor
+                                        Objects.DistanceText.Transparency = Transparency
+                                    else
+                                        Objects.NameText.Visible = false
+                                        Objects.DistanceText.Visible = false
+                                    end
+                                    if library.flags[Team .. " Tool"] then
+                                        Objects.ToolText.Visible = true
+                                        if Character.Equipped:FindFirstChildOfClass("Model") then
+                                            Objects.ToolText.Text = "[" .. Character.Equipped:FindFirstChildOfClass("Model").Name .. "]"
                                         else
                                             Objects.ToolText.Visible = false
                                         end
-                                        local function getPlayerFromCharacter(character)
-                                            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-                                                if player.Character == character then
-                                                    return player
-                                                end
-                                            end
-                                        end
-                                        local function getToolFromPlayer(player)
-                                            local t = {}
-                                            for _, Tool in next, player.Backpack:GetChildren() do
-                                                if Tool:IsA("Tool") then
-                                                    table.insert(t, Tool.Name)
-                                                end
-                                            end
-                                            if t[1] and not t[2] then
-                                                return t[1]
-                                            end
-                                            if t[2] and not t[3] then
-                                                return t[1] .. ", " .. t[2]
-                                            end
-                                            if t[3] and not t[4] then
-                                                return t[1] .. ", " .. t[2] .. ", " .. t[3]
-                                            end
-                                            if t[4] and not t[5] then
-                                                return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4]
-                                            end
-                                            if t[5] and not t[6] then
-                                                return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5]
-                                            end
-                                            if t[6] and not t[7] then
-                                                return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5] .. ", " .. t[6]
-                                            end
-                                            if t[7] and not t[8] then
-                                                return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5] .. ", " .. t[6] .. ", " .. t[7]
-                                            end
-                                            if t[8] and not t[9] then
-                                                return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5] .. ", " .. t[6] .. ", " .. t[7] .. ", " .. t[8]
-                                            end
-                                            if t[9] and not t[10] then
-                                                return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5] .. ", " .. t[6] .. ", " .. t[7] .. ", " .. t[8] .. ", " .. t[9]
-                                            end
-                                            if t[10] and not t[11] then
-                                                return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5] .. ", " .. t[7] .. ", " .. t[7] .. ", " .. t[8] .. ", " .. t[9] .. ", " .. t[10]
-                                            end
-                                        end
-                                        -- local function GetInventory(player)
-                                        --     if player:FindFirstChild("Stats") and player.Stats.Primary.Value ~= nil or "" and player.Stats.Secondary.Value ~= nil or "" then
-                                        --         return player.Stats.Primary.Value and player.Stats.Secondary.Value
-                                        --     end
-                                        -- end
-                                        if library.flags[Team .. " Inventory"] then
-                                            Objects.InventoryText.Visible = true
-                                            if getPlayerFromCharacter(Character).Backpack:FindFirstChildOfClass("Tool") then
-                                                Objects.InventoryText.Text = "[" .. getToolFromPlayer(getPlayerFromCharacter(Character)) .. "]"
-                                            else
-                                                Objects.InventoryText.Visible = false
-                                            end
-                                            Objects.InventoryText.Position = Position + Vector2.new(Size.X / 30, Size.Y + 30)
-                                            Objects.InventoryText.Color = InventoryColor
-                                            Objects.InventoryText.Transparency = Transparency
-                                        else
-                                            Objects.InventoryText.Visible = false
-                                        end
-                                        if library.flags[Team .. " Look Enabled"] then
-                                            HeadPosition = GetHitboxFromChar(Character, "Head")
-                                            if HeadPosition then
-                                                Objects.LookAt.Visible = true
-                                                HeadPosition1 = WTVP(Camera, HeadPosition.Position)
-                                                local To = WTVP(Camera, HeadPosition.Position + (HeadPosition.CFrame.LookVector * 8))
-                                                Objects.LookAt.From = Vector2.new(HeadPosition1.X, HeadPosition1.Y)
-                                                Objects.LookAt.To = Vector2.new(To.X, To.Y)
-                                                Objects.LookAt.Color = LookColor
-                                                Objects.LookAt.Transparency = Transparency
-                                            else
-                                                Objects.LookAt.Visible = false
-                                            end
+                                        Objects.ToolText.Position = Position + Vector2.new(Size.X / 16, Size.Y + 16)
+                                        Objects.ToolText.Color = ToolColor
+                                        Objects.ToolText.Transparency = Transparency
+                                    else
+                                        Objects.ToolText.Visible = false
+                                    end
+                                    -- local function getPlayerFromCharacter(character)
+                                    --     for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                                    --         if player.Character == character then
+                                    --             return player
+                                    --         end
+                                    --     end
+                                    -- end
+                                    -- local function getToolFromPlayer(player)
+                                    --     local t = {}
+                                    --     for _, Tool in next, player.Backpack:GetChildren() do
+                                    --         if Tool:IsA("Tool") then
+                                    --             table.insert(t, Tool.Name)
+                                    --         end
+                                    --     end
+                                    --     if t[1] and not t[2] then
+                                    --         return t[1]
+                                    --     end
+                                    --     if t[2] and not t[3] then
+                                    --         return t[1] .. ", " .. t[2]
+                                    --     end
+                                    --     if t[3] and not t[4] then
+                                    --         return t[1] .. ", " .. t[2] .. ", " .. t[3]
+                                    --     end
+                                    --     if t[4] and not t[5] then
+                                    --         return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4]
+                                    --     end
+                                    --     if t[5] and not t[6] then
+                                    --         return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5]
+                                    --     end
+                                    --     if t[6] and not t[7] then
+                                    --         return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5] .. ", " .. t[6]
+                                    --     end
+                                    --     if t[7] and not t[8] then
+                                    --         return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5] .. ", " .. t[6] .. ", " .. t[7]
+                                    --     end
+                                    --     if t[8] and not t[9] then
+                                    --         return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5] .. ", " .. t[6] .. ", " .. t[7] .. ", " .. t[8]
+                                    --     end
+                                    --     if t[9] and not t[10] then
+                                    --         return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5] .. ", " .. t[6] .. ", " .. t[7] .. ", " .. t[8] .. ", " .. t[9]
+                                    --     end
+                                    --     if t[10] and not t[11] then
+                                    --         return t[1] .. ", " .. t[2] .. ", " .. t[3] .. ", " .. t[4] .. ", " .. t[5] .. ", " .. t[7] .. ", " .. t[7] .. ", " .. t[8] .. ", " .. t[9] .. ", " .. t[10]
+                                    --     end
+                                    -- end
+                                    -- local function GetInventory(player)
+                                    --     if player:FindFirstChild("Stats") and player.Stats.Primary.Value ~= nil or "" and player.Stats.Secondary.Value ~= nil or "" then
+                                    --         return player.Stats.Primary.Value and player.Stats.Secondary.Value
+                                    --     end
+                                    -- end
+                                    -- if library.flags[Team .. " Inventory"] then
+                                    --     Objects.InventoryText.Visible = true
+                                    --     if getPlayerFromCharacter(Character).Backpack:FindFirstChildOfClass("Tool") then
+                                    --         Objects.InventoryText.Text = "[" .. getToolFromPlayer(getPlayerFromCharacter(Character)) .. "]"
+                                    --     else
+                                    --         Objects.InventoryText.Visible = false
+                                    --     end
+                                    --     Objects.InventoryText.Position = Position + Vector2.new(Size.X / 30, Size.Y + 30)
+                                    --     Objects.InventoryText.Color = InventoryColor
+                                    --     Objects.InventoryText.Transparency = Transparency
+                                    -- else
+                                    --     Objects.InventoryText.Visible = false
+                                    -- end
+                                    if library.flags[Team .. " Look Enabled"] then
+                                        HeadPosition = GetHitboxFromChar(Character, "Head")
+                                        if HeadPosition then
+                                            Objects.LookAt.Visible = true
+                                            HeadPosition1 = WTVP(Camera, HeadPosition.Position)
+                                            local To = WTVP(Camera, HeadPosition.Position + (HeadPosition.CFrame.LookVector * 8))
+                                            Objects.LookAt.From = Vector2.new(HeadPosition1.X, HeadPosition1.Y)
+                                            Objects.LookAt.To = Vector2.new(To.X, To.Y)
+                                            Objects.LookAt.Color = LookColor
+                                            Objects.LookAt.Transparency = Transparency
                                         else
                                             Objects.LookAt.Visible = false
                                         end
-                                        if library.flags[Team .. " Direction Enabled"] then
-                                            Objects.DirectionLine.Visible = true
-                                            Position = Position + (Size / 2)
-                                            local PositionOffset2d = V2Empty
-                                            local Diff = (Pos.Position - Data.LastPosition)
-                                            if Diff.Magnitude > 0.01 then
-                                                PositionOffset2d = library.round(Vector2.new(WTSP(Camera, Pos.Position + (Diff.Unit * 4)).X, Position.Y) - Position)
-                                            end
-                                            Objects.DirectionLine.From = Position
-                                            Objects.DirectionLine.To = Position + PositionOffset2d
-                                            Objects.DirectionLine.Color = DirectionColor
-                                            Objects.DirectionLine.Transparency = Transparency
-                                            if Distance < 600 then
-                                                Objects.DirectionDot.Visible = true
-                                                Objects.DirectionDot.Position = Objects.DirectionLine.To - V233
-                                                Objects.DirectionDot.Color = DirectionColor
-                                                Objects.DirectionDot.Transparency = Transparency
-                                            else
-                                                Objects.DirectionDot.Visible = false
-                                            end
+                                    else
+                                        Objects.LookAt.Visible = false
+                                    end
+                                    if library.flags[Team .. " Direction Enabled"] then
+                                        Objects.DirectionLine.Visible = true
+                                        Position = Position + (Size / 2)
+                                        local PositionOffset2d = V2Empty
+                                        local Diff = (Pos.Position - Data.LastPosition)
+                                        if Diff.Magnitude > 0.01 then
+                                            PositionOffset2d = library.round(Vector2.new(WTSP(Camera, Pos.Position + (Diff.Unit * 4)).X, Position.Y) - Position)
+                                        end
+                                        Objects.DirectionLine.From = Position
+                                        Objects.DirectionLine.To = Position + PositionOffset2d
+                                        Objects.DirectionLine.Color = DirectionColor
+                                        Objects.DirectionLine.Transparency = Transparency
+                                        if Distance < 600 then
+                                            Objects.DirectionDot.Visible = true
+                                            Objects.DirectionDot.Position = Objects.DirectionLine.To - V233
+                                            Objects.DirectionDot.Color = DirectionColor
+                                            Objects.DirectionDot.Transparency = Transparency
                                         else
-                                            Objects.DirectionLine.Visible = false
                                             Objects.DirectionDot.Visible = false
                                         end
-                                        Data.LastPosition = Pos.Position
-                                        continue
+                                    else
+                                        Objects.DirectionLine.Visible = false
+                                        Objects.DirectionDot.Visible = false
                                     end
-                                    if library.flags[Team .. " OOV Arrows"] then
-                                        Objects.OOVArrow.Visible = true
-                                        Objects.OOVArrow.Color = Color or library.flags[Team .. Occluded .. "OOV Arrows Color"]
-                                        local RelativePos = Camera.CFrame:Inverse() * Pos.Position
-                                        local Middle = Camera.ViewportSize / 2
-                                        local Degrees = math.deg(math.atan2(- RelativePos.Y, RelativePos.X)) * math.pi / 180
-                                        local EndPos = Middle + (Vector2.new(math.cos(Degrees), math.sin(Degrees)) * library.flags[Team .. " Out Of View Scale"])
-                                        Objects.OOVArrow.PointB = EndPos + (- (Middle - EndPos).Unit * 15)
-                                        Objects.OOVArrow.PointA = EndPos
-                                        Objects.OOVArrow.PointC = EndPos
-                                        Objects.OOVArrow.Transparency = Transparency
-                                        if not Objects.Visible then
-                                            continue
-                                        end
+                                    Data.LastPosition = Pos.Position
+                                    continue
+                                end
+                                if library.flags[Team .. " OOV Arrows"] then
+                                    Objects.OOVArrow.Visible = true
+                                    Objects.OOVArrow.Color = Color or library.flags[Team .. Occluded .. "OOV Arrows Color"]
+                                    local RelativePos = Camera.CFrame:Inverse() * Pos.Position
+                                    local Middle = Camera.ViewportSize / 2
+                                    local Degrees = math.deg(math.atan2(- RelativePos.Y, RelativePos.X)) * math.pi / 180
+                                    local EndPos = Middle + (Vector2.new(math.cos(Degrees), math.sin(Degrees)) * library.flags[Team .. " Out Of View Scale"])
+                                    Objects.OOVArrow.PointB = EndPos + (- (Middle - EndPos).Unit * 15)
+                                    Objects.OOVArrow.PointA = EndPos
+                                    Objects.OOVArrow.PointC = EndPos
+                                    Objects.OOVArrow.Transparency = Transparency
+                                    if not Objects.Visible then
+                                        continue
                                     end
                                 end
                             end
                         end
                     end
-                    Objects.OOVArrow.Visible = false
-                    if Objects.Visible then
-                        Objects.Invis()
-                        Objects.InvisChams()
-                        Objects.InvisChamsOutline()
-                        Objects.InvisRadar()
-                    end
                 end
-            end)
-
-            if not s then
-                warn(e)
+                Objects.OOVArrow.Visible = false
+                if Objects.Visible then
+                    Objects.Invis()
+                    Objects.InvisChams()
+                    Objects.InvisChamsOutline()
+                    Objects.InvisRadar()
+                end
             end
 		end)
 	end
