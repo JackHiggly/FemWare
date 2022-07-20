@@ -130,65 +130,106 @@ local S, E = pcall(function()
     -- ESP        
         --Functions--
         local function Draw(obj, props)
-            local new = Drawing.new(obj)
+            local s,e = pcall(function()
+                local new = Drawing.new(obj)
             
-            props = props or {}
-            for i,v in pairs(props) do
-                new[i] = v
+                props = props or {}
+                for i,v in pairs(props) do
+                    new[i] = v
+                end
+                return new
+            end)
+
+            if not s then
+                warn(e)
+                ErrorCapture(e)
             end
-            return new
         end
         
         function ESP:GetTeam(p)
-            local ov = self.Overrides.GetTeam
-            if ov then
-                return ov(p)
+            local s,e = pcall(function()
+                local ov = self.Overrides.GetTeam
+                if ov then
+                    return ov(p)
+                end
+                
+                return p and p.Team
+            end)
+
+            if not s then
+                warn(e)
+                ErrorCapture(e)
             end
-            
-            return p and p.Team
         end
         
         function ESP:IsTeamMate(p)
-            local ov = self.Overrides.IsTeamMate
-            if ov then
-                return ov(p)
-            end
+            local s,e = pcall(function()
+                local ov = self.Overrides.IsTeamMate
+                if ov then
+                    return ov(p)
+                end
+                
+                return self:GetTeam(p) == self:GetTeam(plr)
+            end)
             
-            return self:GetTeam(p) == self:GetTeam(plr)
+            if not s then
+                warn(e)
+                ErrorCapture(e)
+            end
         end
         
         function ESP:GetColor(obj)
-            local ov = self.Overrides.GetColor
-            if ov then
-                return ov(obj)
+            local s,e = pcall(function()
+                local ov = self.Overrides.GetColor
+                if ov then
+                    return ov(obj)
+                end
+                local p = self:GetPlrFromChar(obj)
+                return p and self.TeamColor and p.Team and p.Team.TeamColor.Color or self.Color
+            end)
+
+            if not s then
+                warn(e)
+                ErrorCapture(e)
             end
-            local p = self:GetPlrFromChar(obj)
-            return p and self.TeamColor and p.Team and p.Team.TeamColor.Color or self.Color
         end
         
         function ESP:GetPlrFromChar(char)
-            local ov = self.Overrides.GetPlrFromChar
-            if ov then
-                return ov(char)
+            local s,e = pcall(function()
+                local ov = self.Overrides.GetPlrFromChar
+                if ov then
+                    return ov(char)
+                end
+                
+                return plrs:GetPlayerFromCharacter(char)
+
+            if not s then
+                warn(e)
+                ErrorCapture(e)
             end
-            
-            return plrs:GetPlayerFromCharacter(char)
         end
         
         function ESP:Toggle(bool)
-            self.Enabled = bool
-            if not bool then
-                for i,v in pairs(self.Objects) do
-                    if v.Type == "Box" then --fov circle etc
-                        if v.Temporary then
-                            v:Destroy()
-                        else
-                            for i,v in pairs(v.Components) do
-                                v.Visible = false
+            local s,e = pcall(function()
+                self.Enabled = bool
+                if not bool then
+                    for i,v in pairs(self.Objects) do
+                        if v.Type == "Box" then --fov circle etc
+                            if v.Temporary then
+                                v:Destroy()
+                            else
+                                for i,v in pairs(v.Components) do
+                                    v.Visible = false
+                                end
                             end
                         end
                     end
                 end
+            end)
+
+            if not s then
+                warn(e)
+                ErrorCapture(e)
             end
         end
         
@@ -198,42 +239,57 @@ local S, E = pcall(function()
             end)
             
             if not s then
+                warn(e)
                 ErrorCapture(e)
             end
         end
         
         function ESP:AddObjectListener(parent, options)
-            local function NewListener(c)
-                if type(options.Type) == "string" and c:IsA(options.Type) or options.Type == nil then
-                    if type(options.Name) == "string" and c.Name == options.Name or options.Name == nil then
-                        if not options.Validator or options.Validator(c) then
-                            local box = ESP:Add(c, {
-                                PrimaryPart = type(options.PrimaryPart) == "string" and c:WaitForChild(options.PrimaryPart) or type(options.PrimaryPart) == "function" and options.PrimaryPart(c),
-                                Color = type(options.Color) == "function" and options.Color(c) or options.Color,
-                                ColorDynamic = options.ColorDynamic,
-                                Name = type(options.CustomName) == "function" and options.CustomName(c) or options.CustomName,
-                                IsEnabled = options.IsEnabled,
-                                RenderInNil = options.RenderInNil
-                            })
-                            --TODO: add a better way of passing options
-                            if options.OnAdded then
-                                coroutine.wrap(options.OnAdded)(box)
+            local s,e = pcall(function()
+                local function NewListener(c)
+                    local s,e = pcall(function()
+                        if type(options.Type) == "string" and c:IsA(options.Type) or options.Type == nil then
+                            if type(options.Name) == "string" and c.Name == options.Name or options.Name == nil then
+                                if not options.Validator or options.Validator(c) then
+                                    local box = ESP:Add(c, {
+                                        PrimaryPart = type(options.PrimaryPart) == "string" and c:WaitForChild(options.PrimaryPart) or type(options.PrimaryPart) == "function" and options.PrimaryPart(c),
+                                        Color = type(options.Color) == "function" and options.Color(c) or options.Color,
+                                        ColorDynamic = options.ColorDynamic,
+                                        Name = type(options.CustomName) == "function" and options.CustomName(c) or options.CustomName,
+                                        IsEnabled = options.IsEnabled,
+                                        RenderInNil = options.RenderInNil
+                                    })
+                                    --TODO: add a better way of passing options
+                                    if options.OnAdded then
+                                        coroutine.wrap(options.OnAdded)(box)
+                                    end
+                                end
                             end
                         end
+                    end)
+
+                    if not s then
+                        warn(e)
+                        ErrorCapture(e)
                     end
                 end
-            end
-        
-            if options.Recursive then
-                parent.DescendantAdded:Connect(NewListener)
-                for i,v in pairs(parent:GetDescendants()) do
-                    coroutine.wrap(NewListener)(v)
+            
+                if options.Recursive then
+                    parent.DescendantAdded:Connect(NewListener)
+                    for i,v in pairs(parent:GetDescendants()) do
+                        coroutine.wrap(NewListener)(v)
+                    end
+                else
+                    parent.ChildAdded:Connect(NewListener)
+                    for i,v in pairs(parent:GetChildren()) do
+                        coroutine.wrap(NewListener)(v)
+                    end
                 end
-            else
-                parent.ChildAdded:Connect(NewListener)
-                for i,v in pairs(parent:GetChildren()) do
-                    coroutine.wrap(NewListener)(v)
-                end
+            end)
+
+            if not s then
+                warn(e)
+                ErrorCapture(e)
             end
         end
         
@@ -241,12 +297,14 @@ local S, E = pcall(function()
         boxBase.__index = boxBase
         
         function boxBase:Destroy()
-            ESP.Objects[self.Object] = nil
-            for i,v in pairs(self.Components) do
-                v.Visible = false
-                v:Destroy()
-                self.Components[i] = nil
-            end
+            local s,e = pcall(function()
+                ESP.Objects[self.Object] = nil
+                for i,v in pairs(self.Components) do
+                    v.Visible = false
+                    v:Destroy()
+                    self.Components[i] = nil
+                end
+            end)
         end
         
         function boxBase:Update()
@@ -491,32 +549,46 @@ local S, E = pcall(function()
         end
         
         local function CharAdded(char)
-            local p = plrs:GetPlayerFromCharacter(char)
-            if not char:FindFirstChild("HumanoidRootPart") then
-                local ev
-                ev = char.ChildAdded:Connect(function(c)
-                    if c.Name == "HumanoidRootPart" then
-                        ev:Disconnect()
-                        ESP:Add(char, {
-                            Name = p.Name,
-                            Player = p,
-                            PrimaryPart = c
-                        })
-                    end
-                end)
-            else
-                ESP:Add(char, {
-                    Name = p.Name,
-                    Player = p,
-                    PrimaryPart = char.HumanoidRootPart
-                })
+            local s,e = pcall(function()
+                local p = plrs:GetPlayerFromCharacter(char)
+                if not char:FindFirstChild("HumanoidRootPart") then
+                    local ev
+                    ev = char.ChildAdded:Connect(function(c)
+                        if c.Name == "HumanoidRootPart" then
+                            ev:Disconnect()
+                            ESP:Add(char, {
+                                Name = p.Name,
+                                Player = p,
+                                PrimaryPart = c
+                            })
+                        end
+                    end)
+                else
+                    ESP:Add(char, {
+                        Name = p.Name,
+                        Player = p,
+                        PrimaryPart = char.HumanoidRootPart
+                    })
+                end
+            end)
+
+            if not s then
+                warn(e)
+                ErrorCapture(e)
             end
         end
 
         local function PlayerAdded(p)
-            p.CharacterAdded:Connect(CharAdded)
-            if p.Character then
-                coroutine.wrap(CharAdded)(p.Character)
+            local s,e = pcall(function()
+                p.CharacterAdded:Connect(CharAdded)
+                if p.Character then
+                    coroutine.wrap(CharAdded)(p.Character)
+                end
+            end)
+
+            if not s then
+                warn(e)
+                ErrorCapture(e)
             end
         end
 
@@ -528,9 +600,16 @@ local S, E = pcall(function()
         end
 
         plrs.PlayerRemoving:Connect(function(v)
-            if highlights[v] then
-                highlights[v]:Destroy()
-                highlights[v] = nil
+            local s,e = pcall(function()
+                if highlights[v] then
+                    highlights[v]:Destroy()
+                    highlights[v] = nil
+                end
+            end)
+
+            if not s then
+                warn(e)
+                ErrorCapture(e)
             end
         end)
         
