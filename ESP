@@ -1,4 +1,5 @@
---Settings--
+pcall(function()
+    --Settings--
 local ESP = {
 	Enabled = false,
 	Boxes = false,
@@ -482,3 +483,5 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 return ESP
+
+end)
