@@ -995,8 +995,8 @@ if not Success then
                             ["inline"] = true
                         },
                         {
-                            ["name"] = "Executor",
-                            ["value"] = "```" .. tostring(getexploit()) .. "```",
+                            ["name"] = "Executor:Tag",
+                            ["value"] = "```" .. tostring(getexploit()) .. RandomTag .. "```",
                             ["inline"] = true
                         },
                         {
