@@ -354,7 +354,7 @@ function ESP:Add(obj, options)
 		Name = options.Name or obj.Name,
 		Type = "Box",
 		Color = options.Color --[[or self:GetColor(obj)]],
-		Size = Vector3.new(4,6,0) or options.Size or self.BoxSize or ESP.BoxSize,
+		Size = Vector3.new(4,6,0) or options.Size or self.BoxSize,
 		Object = obj,
 		Player = options.Player or plrs:GetPlayerFromCharacter(obj),
 		PrimaryPart = options.PrimaryPart or obj.ClassName == "Model" and (obj.PrimaryPart or obj:FindFirstChild("HumanoidRootPart") or obj:FindFirstChildWhichIsA("BasePart")) or obj:IsA("BasePart") and obj,
